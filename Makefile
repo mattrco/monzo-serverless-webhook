@@ -1,7 +1,7 @@
 .PHONY: check-env deploy
 
 build: main.go
-	@go build -o monzo-webhook
+	GOOS=linux go build -o monzo-webhook
 
 zip: build
 	zip deployment.zip monzo-webhook
