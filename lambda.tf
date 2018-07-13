@@ -34,6 +34,32 @@ resource "aws_iam_role" "lambda_exec" {
 EOF
 }
 
+resource "aws_iam_policy" "lambda_logging" {
+  name = "lambda_logging"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "logs:DescribeLogStreams"
+      ],
+      "Resource": "arn:aws:logs:*:*:*",
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_logs" {
+  role = "${aws_iam_role.lambda_exec.name}"
+  policy_arn = "${aws_iam_policy.lambda_logging.arn}"
+}
+
 resource "aws_lambda_permission" "api_gateway" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
