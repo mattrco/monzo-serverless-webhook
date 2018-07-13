@@ -3,20 +3,15 @@
 build: main.go
 	GOOS=linux go build -o monzo-webhook
 
-zip: build
+test:
+	go test ./...
+
+zip: build test
 	zip deployment.zip monzo-webhook
 
 check-env:
-	test -n "$(ACCOUNT_ID)" # $$ACCOUNT_ID env var must be set
-	test -n "$(ROLE)"       # $$ROLE env var must be set
+	test -n "$(VERSION)" # $$VERSION env var must be set
 
 deploy: zip check-env
-	aws lambda create-function \
-	--cli-connect-timeout 300 \
-	--region eu-west-2 \
-	--function-name monzo-webhook \
-	--zip-file fileb://./deployment.zip \
-	--runtime go1.x \
-	--tracing-config Mode=Active \
-	--role arn:aws:iam::$(ACCOUNT_ID):role/$(ROLE) \
-	--handler monzo-webhook
+	aws s3 cp deployment.zip s3://monzo-webhook-lambda/versions/$(VERSION)/deployment.zip
+	terraform apply -var="app_version=$(VERSION)"
