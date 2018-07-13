@@ -2,12 +2,15 @@ provider "aws" {
   region = "eu-west-2"
 }
 
+variable "app_version" {
+}
+
 resource "aws_lambda_function" "monzo_webhook" {
   function_name = "MonzoWebhook"
   handler       = "monzo-webhook"
   runtime       = "go1.x"
   s3_bucket     = "monzo-webhook-lambda"
-  s3_key        = "v1/deployment.zip"
+  s3_key        = "versions/${var.app_version}/deployment.zip"
   role          = "${aws_iam_role.lambda_exec.arn}"
 }
 
