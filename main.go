@@ -20,6 +20,8 @@ func Handler(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse,
 
 	webhookBody := WebhookBody{}
 	if err := json.Unmarshal([]byte(req.Body), &webhookBody); err != nil {
+		log.Print(err)
+		log.Printf("%+v", req.Body) // Body is a string so can be reused
 		return events.APIGatewayProxyResponse{
 			StatusCode: http.StatusInternalServerError,
 			Body:       http.StatusText(http.StatusInternalServerError),
