@@ -16,7 +16,7 @@ type WebhookData struct {
 	ID          string
 	Category    string
 	IsLoad      bool `json:"is_load"`
-	Settled     time.Time
+	Settled     string
 	Merchant    Merchant
 }
 
